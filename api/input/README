@@ -1,0 +1,3 @@
+For now, using tmdb data files. found here https://www.kaggle.com/mariomatos/recommender-practice/edit
+Eventually, this files would be removed and the tmdb api would be queried to get data like this
+

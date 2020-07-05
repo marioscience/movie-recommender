@@ -8,4 +8,4 @@ else
         export FLASK_ENV=production
 fi
 
-flask run
+flask run --host 0.0.0.0
