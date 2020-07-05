@@ -1,3 +1,4 @@
+import os.path
 import numpy as np
 import pandas as pd
 from surprise import Dataset
@@ -5,8 +6,8 @@ from ast import literal_eval
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-movie_df = pd.read_csv('../input/tmdb_5000_movies.csv')
-movie_credits_df = pd.read_csv('../input/tmdb_5000_credits.csv')
+movie_df = pd.read_csv(os.path.join(os.path.dirname(__file__), "..", "input", "tmdb_5000_movies.csv"))
+movie_credits_df = pd.read_csv(os.path.join(os.path.dirname(__file__), "..", "input", "tmdb_5000_credits.csv"))
 
 VECTORIZER = None
 VECTORIZED_MATRIX = None
@@ -23,14 +24,14 @@ def get_trending_movies():
     'spoken_languages', 'status', 'production_companies'
     ], axis='columns')
     movies['genres'] = movies['genres'].apply(literal_eval)
-    
+
     avg_rating = movies['vote_average'].mean()
-    min_vote_value = np.percentile(movies['vote_count'], 80)    
+    min_vote_value = np.percentile(movies['vote_count'], 80)
     movies = movies.loc[movies['vote_count'] >= min_vote_value]
 
     for index, row in movies.iterrows():
         movies.at[index, 'imdb_rating'] = calculate_weigthed_rating(row['vote_average'], min_vote_value, row['vote_count'], avg_rating)
-    
+
     return movies.sort_values('imdb_rating', ascending=False).head(10).to_json(orient='records')
 
 def get_top_10_similar(movie_id):
@@ -50,7 +51,7 @@ def get_top_10_similar(movie_id):
     # Give recommendation
     movie_similarity_vector = list(enumerate(COSINE_SIMILARITY_MATRIX[MOVIE_ID_INDICES[movie_id]]))
     movie_similarity_scores = sorted(movie_similarity_vector, key=lambda x: x[1], reverse=True)[1:11]
-        
+
     return movies.iloc[[i[0] for i in movie_similarity_scores]].to_json(orient='records')
 
 def get_rating(user_id, movie_id):
