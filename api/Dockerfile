@@ -7,10 +7,11 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src ./src
+COPY input ./input
 COPY OMDB_API_KEY .
 COPY run.sh .
 
-RUN source OMDB_API_KEY
+RUN [ "/bin/bash", "-c", "source OMDB_API_KEY" ]
 
 EXPOSE 5000
 
