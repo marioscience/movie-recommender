@@ -8,6 +8,14 @@ app = Flask(__name__)
 def login_user():
     """ Simulate a user login in and create object for user """
     pass
+
+@app.route('/api/getImdbKey/<title>')
+def get_imdb_key(title):
+    return service.get_movie_imdb_id(title)
+
+@app.route('/api/getId/<title>')
+def get_movie_id_by_title(title):
+    return service.get_movie_id_by_title(title)
     
 @app.route('/api/trending')
 def trending():
