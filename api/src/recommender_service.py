@@ -86,7 +86,7 @@ def get_trending_movies():
     return append_imdb_id_to_df(top_ten_similar).to_json(orient='records')
 
 
-def get_top_10_similar(movie_id):
+def get_top_10_similar(movie_id, use_overview_for_similarity=True): #change use_overview to False...
     """
     Given a movie id, return the top 10 similar movies.
     params: movie id
@@ -97,7 +97,11 @@ def get_top_10_similar(movie_id):
     global COSINE_SIMILARITY_MATRIX
     global MOVIE_ID_INDICES
 
-    movies = format_data_objects(movie_df.copy())
+    movie_with_credits = movie_credits_df.rename({"movie_id": "id"})
+    # create optional variable to use soup or overview. create word soup here.
+
+    movies = movie_df.copy()
+    movies['soup'] = ''
 
     # print(movies.isnull().sum())
     for feature in ['overview', 'tagline']:
@@ -106,10 +110,14 @@ def get_top_10_similar(movie_id):
     # Keep calculated objects in memory for performance
     if COSINE_SIMILARITY_MATRIX.size == 0:
         VECTORIZER = TfidfVectorizer(stop_words='english')
-        VECTORIZED_MATRIX = VECTORIZER.fit_transform(movies['overview'])
+        if use_overview_for_similarity:
+            VECTORIZED_MATRIX = VECTORIZER.fit_transform(movies['overview'])
+        else:
+            VECTORIZED_MATRIX = VECTORIZER.fit_transform(movies['soup'])
         COSINE_SIMILARITY_MATRIX = cosine_similarity(VECTORIZED_MATRIX)
         MOVIE_ID_INDICES = pd.Series(movies.index, index=movies['id']).drop_duplicates()
 
+    movies = format_data_objects(movies)
     # Give recommendation
     movie_similarity_vector = list(enumerate(COSINE_SIMILARITY_MATRIX[MOVIE_ID_INDICES[int(movie_id)]]))
     movie_similarity_scores = sorted(movie_similarity_vector, key=lambda x: x[1], reverse=True)[1:11]
@@ -141,8 +149,8 @@ def get_rating(user_id, movie_id):
 def format_data_objects(dataframe):
     dataframe = dataframe.drop([
         'homepage', 'keywords', 'original_language', 'production_countries', 'original_title', 'revenue',
-        'spoken_languages', 'status', 'production_companies'
-    ], axis='columns')
+        'spoken_languages', 'status', 'production_companies', 'soup'
+    ], axis='columns', errors='ignore')
     dataframe['genres'] = dataframe['genres'].apply(literal_eval)
     return dataframe
 
@@ -163,17 +171,6 @@ def calculate_weigthed_rating(rating, minimum_votes, number_of_votes, avg_rating
     rhs = number_of_votes / (number_of_votes + minimum_votes)
     lhs = minimum_votes / (number_of_votes + minimum_votes)
     return (rhs * rating) + (lhs * avg_rating)
-
-
-def prepare_collaborative_data():
-    """
-    Clean and prepare all data for collaborative filtering
-    params:mnmm
-    returns:
-    """
-
-    # [i['name'] if i['job'] == 'Director' for i in ]
-    pass
 
 
 def create_movie_column_soup(movie, features):
