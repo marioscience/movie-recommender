@@ -86,7 +86,7 @@ def get_trending_movies():
     return append_imdb_id_to_df(top_ten_similar).to_json(orient='records')
 
 
-def get_top_10_similar(movie_id, use_overview_for_similarity=True): #change use_overview to False...
+def get_top_10_similar(movie_id, use_overview_for_similarity=False):
     """
     Given a movie id, return the top 10 similar movies.
     params: movie id
@@ -97,15 +97,17 @@ def get_top_10_similar(movie_id, use_overview_for_similarity=True): #change use_
     global COSINE_SIMILARITY_MATRIX
     global MOVIE_ID_INDICES
 
-    movie_with_credits = movie_credits_df.rename({"movie_id": "id"})
+    movies_with_credits = movie_credits_df.rename({"movie_id": "id"}, axis='columns').drop('title', axis='columns')
     # create optional variable to use soup or overview. create word soup here.
 
     movies = movie_df.copy()
-    movies['soup'] = ''
+    movies = movies.merge(movies_with_credits, on='id')
 
     # print(movies.isnull().sum())
     for feature in ['overview', 'tagline']:
         movies[feature] = movies[feature].fillna('')
+
+    movies = movies.apply(create_movie_column_soup, axis=1)
 
     # Keep calculated objects in memory for performance
     if COSINE_SIMILARITY_MATRIX.size == 0:
@@ -113,7 +115,7 @@ def get_top_10_similar(movie_id, use_overview_for_similarity=True): #change use_
         if use_overview_for_similarity:
             VECTORIZED_MATRIX = VECTORIZER.fit_transform(movies['overview'])
         else:
-            VECTORIZED_MATRIX = VECTORIZER.fit_transform(movies['soup'])
+            VECTORIZED_MATRIX = VECTORIZER.fit_transform(movies['column_soup'])
         COSINE_SIMILARITY_MATRIX = cosine_similarity(VECTORIZED_MATRIX)
         MOVIE_ID_INDICES = pd.Series(movies.index, index=movies['id']).drop_duplicates()
 
@@ -149,7 +151,7 @@ def get_rating(user_id, movie_id):
 def format_data_objects(dataframe):
     dataframe = dataframe.drop([
         'homepage', 'keywords', 'original_language', 'production_countries', 'original_title', 'revenue',
-        'spoken_languages', 'status', 'production_companies', 'soup'
+        'spoken_languages', 'status', 'production_companies', 'crew', 'cast', 'column_soup'
     ], axis='columns', errors='ignore')
     dataframe['genres'] = dataframe['genres'].apply(literal_eval)
     return dataframe
@@ -173,7 +175,7 @@ def calculate_weigthed_rating(rating, minimum_votes, number_of_votes, avg_rating
     return (rhs * rating) + (lhs * avg_rating)
 
 
-def create_movie_column_soup(movie, features):
+def create_movie_column_soup(movie):
     """ 
     Given a group of dataframes and a group of labels,
     check if the label is in each diagram (use df.colums.contains)
@@ -183,12 +185,20 @@ def create_movie_column_soup(movie, features):
     params: dataframe
     returns: dataframe with cleaned data
     """
-    soup = ""
-    for feature in features:
-        next = movie[feature]
-        if isinstance(next, str):
-            next = list([next])
-        soup += ' '.join(next)
+    # serialize important cast names
+    desired_crew_jobs = ['Original Music Composer', 'Director', 'Writer' ]
+    genres = stringify_features(movie, 'genres').lower()
+    keywords = stringify_features(movie, 'keywords').lower()
+    overview = movie['overview'].lower()
+    cast = ' '.join(['-'.join(i['name'].split(" ")) for i in sorted(literal_eval(movie['cast']), key=lambda x: x['order'])[0:10]]).lower()
+    crew = ' '.join(['-'.join(i['name'].split(" ")) for i in literal_eval(movie['crew']) if i['job'] in desired_crew_jobs]).lower()
+    # serialize important crew names departments:
+
+    movie['column_soup'] = "%s %s %s %s %s" % (genres, keywords, overview, cast, crew)
+    return movie
+
+def stringify_features(items, feature, extract_feature='name'):
+    return ' '.join(['-'.join(i[extract_feature].split(" ")) for i in literal_eval(items[feature])])
 
 
 if __name__ == "__main__":
