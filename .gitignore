@@ -1,4 +1,8 @@
 # api
+api/.idea
 api/venv/
 api/src/__pycache__/
 api/OMDB_API_KEY
+
+# client
+client/.idea
