@@ -107,10 +107,10 @@ def get_top_10_similar(movie_id, use_overview_for_similarity=False):
     for feature in ['overview', 'tagline']:
         movies[feature] = movies[feature].fillna('')
 
-    movies = movies.apply(create_movie_column_soup, axis=1)
-
     # Keep calculated objects in memory for performance
     if COSINE_SIMILARITY_MATRIX.size == 0:
+        movies = movies.apply(create_movie_column_soup, axis=1)
+
         VECTORIZER = TfidfVectorizer(stop_words='english')
         if use_overview_for_similarity:
             VECTORIZED_MATRIX = VECTORIZER.fit_transform(movies['overview'])
