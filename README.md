@@ -7,6 +7,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 python3 src/recommender-api.py
 ```
+Remember to run ``` source OMDB_API_KEY``` to set OMDB Api Key.
 
 ### Run on Docker
 ```
@@ -20,6 +21,7 @@ docker run -it -p 5000:5000 movie-recommend
 cd movie-recommender/
 docker-compose up
 ```
+Remember to run ``` source OMDB_API_KEY``` to set OMDB Api Key.
 
 ### Currently implemented API endpoints
 ```
