@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export FLASK_APP=src/recommender-api.py
+export FLASK_APP=src/endpoints.py
 if [ "$1" != '-production' ]
 then
 	export FLASK_ENV=development

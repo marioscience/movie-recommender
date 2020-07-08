@@ -1,4 +1,5 @@
 # api
+.idea/
 api/.idea
 api/venv/
 api/src/__pycache__/

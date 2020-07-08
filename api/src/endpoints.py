@@ -1,5 +1,5 @@
 import os
-import recommender_service as service
+import service as service
 from flask import Flask
 
 app = Flask(__name__)
