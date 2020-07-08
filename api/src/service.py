@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import os.path
 import requests as req
 import numpy as np
@@ -46,13 +47,36 @@ def get_movie_imdb_id(title, get_object=False):
         return error_message, 500
 
     url = "http://www.omdbapi.com/?t=%s&apikey=%s" % (title, OMDB_KEY)
-    res = literal_eval(req.get(url).text)
+    res = json.loads(req.get(url).text)
 
     if get_object:
         return res
 
     imdb_id = res["imdbID"] if "imdbID" in res else "not_found"
     return imdb_id
+
+def get_movie_poster(movie):
+    """ Get movie and append poster image from tmdb API"""
+    if "TMDB_API_KEY" in os.environ:
+        TMDB_KEY = os.environ['TMDB_API_KEY']
+    else:
+        error_message = "Error TMDB API Key not set. Refer to documentation to add this"
+        print(error_message, file=sys.stderr)
+        return error_message, 500
+
+    # The URL for the poster has two parts, base_url+poster_size and actual URL. The first is found in config.
+    tmdb_config_url = "https://api.themoviedb.org/3/configuration?api_key=%s" % TMDB_KEY
+    url = "https://api.themoviedb.org/3/movie/%s/images?api_key=%s" % (str(movie['id']), TMDB_KEY)
+
+    config_res = json.loads(req.get(tmdb_config_url).text)["images"]
+    res = json.loads(req.get(url).text)
+
+    base_url = config_res["base_url"]
+    poster_size = config_res["poster_sizes"][3]
+    poster_url = res["posters"][0]["file_path"]
+
+    movie['poster_url'] = base_url + poster_size + poster_url
+    return movie
 
 
 def get_movie_id_by_title(title):
@@ -82,11 +106,12 @@ def get_trending_movies():
                                                                     row['vote_count'], avg_rating)
 
     top_ten_similar = movies.sort_values('imdb_rating', ascending=False).head(10)
+    top_ten_similar = top_ten_similar.apply(get_movie_poster, axis=1)
 
     return append_imdb_id_to_df(top_ten_similar).to_json(orient='records')
 
 
-def get_top_10_similar(movie_id, use_overview_for_similarity=False):
+def get_top_10_similar(movie_id, use_overview_for_similarity=False): ## Change back to False as default
     """
     Given a movie id, return the top 10 similar movies.
     params: movie id
@@ -124,8 +149,10 @@ def get_top_10_similar(movie_id, use_overview_for_similarity=False):
     movie_similarity_vector = list(enumerate(COSINE_SIMILARITY_MATRIX[MOVIE_ID_INDICES[int(movie_id)]]))
     movie_similarity_scores = sorted(movie_similarity_vector, key=lambda x: x[1], reverse=True)[1:11]
     top_ten_similar = movies.iloc[[i[0] for i in movie_similarity_scores]]
+    top_ten_similar = append_imdb_id_to_df(top_ten_similar)
+    top_ten_similar = top_ten_similar.apply(get_movie_poster, axis=1)
 
-    return append_imdb_id_to_df(top_ten_similar).to_json(orient='records')
+    return top_ten_similar.to_json(orient='records')
 
 
 def get_rating(user_id, movie_id):
@@ -144,7 +171,7 @@ def get_rating(user_id, movie_id):
     movie = format_data_objects(movie_df.loc[movie_df['id'] == int(movie_id)])
     movie['predicted_rating'] = prediction.est
     movie['imdb_id'] = get_movie_imdb_id(movie['title'].iloc[0])
-
+    movie = get_movie_poster(movie)
     return movie.to_json(orient='records')
 
 
