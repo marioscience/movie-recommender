@@ -1,0 +1,9 @@
+.movie-list {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.movie-list>a {
+    text-decoration: none;
+    color: black;
+}
