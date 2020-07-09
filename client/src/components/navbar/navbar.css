@@ -26,7 +26,8 @@ h1.header-title {
     right: 45px;
 }
 
-.user-box svg {
+.user-box img {
     position: relative;
-    top: 13px;
+    top: 15px;
+    left: 15px;
 }
