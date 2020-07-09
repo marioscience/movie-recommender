@@ -4,10 +4,40 @@
     border: 1px double white;
     padding: 11px 20px;
     trasition: .5s;
+    margin: 0 1%;
 }
 
 .watch-button:hover {
     padding: 14px 23px;
     background-color: #141414;
     transition: .5s;
+}
+
+.movie-detail {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    padding: 8px;
+}
+
+.movie-detail .trailer-video {
+    align-self: stretch;
+    width: 50%;
+    display: flex;
+    padding: 30px;
+}
+
+.movie-detail .embed-div {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.movie-detail embed {
+    width: 100%;
+    align-self: stretch;
+}
+
+.movie-detail .movie-info {
+    padding: 30px;
 }

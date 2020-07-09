@@ -55,7 +55,7 @@ def get_movie_imdb_id(title, get_object=False):
     imdb_id = res["imdbID"] if "imdbID" in res else "not_found"
     return imdb_id
 
-def get_movie_poster(movie):
+def get_movie_poster_and_trailer(movie, get_trailer=False):
     """ Get movie and append poster image from tmdb API"""
     if "TMDB_API_KEY" in os.environ:
         TMDB_KEY = os.environ['TMDB_API_KEY']
@@ -69,7 +69,8 @@ def get_movie_poster(movie):
 
     # The URL for the poster has two parts, base_url+poster_size and actual URL. The first is found in config.
     tmdb_config_url = "https://api.themoviedb.org/3/configuration?api_key=%s" % TMDB_KEY
-    url = "https://api.themoviedb.org/3/movie/%s/images?api_key=%s" % (str(movie_id), TMDB_KEY)
+    #url = "https://api.themoviedb.org/3/movie/%s/images?api_key=%s" % (str(movie_id), TMDB_KEY)
+    url = "https://api.themoviedb.org/3/movie/%s?api_key=%s&append_to_response=videos" % (str(movie_id), TMDB_KEY)
 
     config_res = json.loads(req.get(tmdb_config_url).text)["images"]
     res = json.loads(req.get(url).text)
@@ -77,11 +78,25 @@ def get_movie_poster(movie):
     base_url = config_res["base_url"]
     poster_size = config_res["poster_sizes"][3]
 
-    if res["posters"]:
-        poster_url = res["posters"][0]["file_path"]
+    if res["poster_path"]:
+        poster_url = res["poster_path"]
         movie['poster_url'] = base_url + poster_size + poster_url
     else:
         movie['poster_url'] = "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg"
+
+    if get_trailer:
+        trailer_url_id = {}
+        if res["videos"]["results"]:
+            trailer_url_id = next(video for video in res["videos"]["results"] if video["type"] == "Trailer" and "teaser" not in video["name"].lower())
+            if not trailer_url_id:
+                trailer_url_id = res["videos"]["results"][0]
+
+        if trailer_url_id and trailer_url_id["site"] == "YouTube":
+            #movie["trailer_url"] = "https://www.youtube.com/watch?v=%s" % trailer_url_id["key"]
+            movie["trailer_url"] = "https://www.youtube.com/embed/%s?autoplay=1" % trailer_url_id["key"]
+        else:
+            movie["trailer_url"] = "https://www.youtube.com/watch?v=dQw4w9WgXcQ" #not found
+
     return movie
 
 
@@ -112,7 +127,7 @@ def get_trending_movies():
                                                                     row['vote_count'], avg_rating)
 
     top_ten_similar = movies.sort_values('imdb_rating', ascending=False).head(10)
-    top_ten_similar = top_ten_similar.apply(get_movie_poster, axis=1)
+    top_ten_similar = top_ten_similar.apply(get_movie_poster_and_trailer, axis=1)
 
     return append_imdb_id_to_df(top_ten_similar).to_json(orient='records')
 
@@ -156,7 +171,7 @@ def get_top_10_similar(movie_id, use_overview_for_similarity=False): ## Change b
     movie_similarity_scores = sorted(movie_similarity_vector, key=lambda x: x[1], reverse=True)[1:11]
     top_ten_similar = movies.iloc[[i[0] for i in movie_similarity_scores]]
     top_ten_similar = append_imdb_id_to_df(top_ten_similar)
-    top_ten_similar = top_ten_similar.apply(get_movie_poster, axis=1)
+    top_ten_similar = top_ten_similar.apply(get_movie_poster_and_trailer, axis=1)
 
     return top_ten_similar.to_json(orient='records')
 
@@ -177,7 +192,7 @@ def get_rating(user_id, movie_id):
     movie = format_data_objects(movie_df.loc[movie_df['id'] == int(movie_id)])
     movie['predicted_rating'] = prediction.est
     movie['imdb_id'] = get_movie_imdb_id(movie['title'].iloc[0])
-    movie = get_movie_poster(movie)
+    movie = get_movie_poster_and_trailer(movie, get_trailer=True)
     return movie.to_json(orient='records')
 
 

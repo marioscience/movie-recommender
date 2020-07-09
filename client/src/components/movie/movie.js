@@ -53,15 +53,29 @@ class Movie extends React.Component {
             const runtimeHr = Math.floor(this.state.movie.runtime);
             const runtimeMn = (this.state.movie.runtime - runtimeHr) * 60;
             movieInfo = (
-                <div>
-                    <img src={this.state.movie.poster_url} alt=""/>
-                    <h2>{this.state.movie.title}</h2>
-                    <div>
-                        <span>{this.state.movie.tagline}</span><br/>
-                        <span><strong>Release Date: </strong>{new Date(this.state.movie.release_date).toLocaleDateString()}</span><br/>
-                        <span><strong>Runtime: </strong>{runtimeHr + ":" + ("0" + runtimeMn).slice(-2)}</span><br/>
-                        <h3><strong>We Believe You'll Rate it: </strong>{this.state.movie.predicted_rating.toFixed(2)}</h3>
-                        <a className="watch-button" target="_blank" rel="noopener noreferrer" href={`https://www.netflix.com/search?q=${this.state.movie.title}`}>Watch now</a>
+                <div className="movie-detail">
+                    <div className="trailer-video" >
+                        <div className="embed-div">
+                        <embed
+                            src={this.state.movie.trailer_url}
+                            wmode="transparent"
+                            type="video/mp4"
+                            allow="autoplay; encrypted-media; picture-in-picture"
+                            allowfullscreen
+                            title="Keyboard Cat" />
+                            </div>
+                    </div>
+                    <div className="movie-info">
+                        <img src={this.state.movie.poster_url} alt=""/>
+                        <h2>{this.state.movie.title}</h2>
+                        <div>
+                            <span>{this.state.movie.tagline}</span><br/>
+                            <span><strong>Release Date: </strong>{new Date(this.state.movie.release_date).toLocaleDateString()}</span><br/>
+                            <span><strong>Runtime: </strong>{runtimeHr + ":" + ("0" + runtimeMn).slice(-2)}</span><br/>
+                            <h3><strong>We Believe You'll Rate it: </strong>{this.state.movie.predicted_rating.toFixed(2)}</h3>
+                            <a className="watch-button" target="_blank" rel="noopener noreferrer" href={`https://www.netflix.com/search?q=${this.state.movie.title}`}>Watch now</a>
+                            <a className="watch-button" target="_blank" rel="noopener noreferrer" href={this.state.movie.trailer_url}>Watch Trailer</a>
+                        </div>
                     </div>
                 </div>
             )
