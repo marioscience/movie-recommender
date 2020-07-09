@@ -1,0 +1,13 @@
+.watch-button {
+    color: white;
+    text-decoration: none;
+    border: 1px double white;
+    padding: 11px 20px;
+    trasition: .5s;
+}
+
+.watch-button:hover {
+    padding: 14px 23px;
+    background-color: #141414;
+    transition: .5s;
+}

@@ -1,5 +1,6 @@
 import React from 'react';
 import MovieList from '../movielist/movielist';
+import './movie.css';
 
 class Movie extends React.Component {
     constructor(props) {
@@ -60,6 +61,7 @@ class Movie extends React.Component {
                         <span><strong>Release Date: </strong>{new Date(this.state.movie.release_date).toLocaleDateString()}</span><br/>
                         <span><strong>Runtime: </strong>{runtimeHr + ":" + ("0" + runtimeMn).slice(-2)}</span><br/>
                         <h3><strong>We Believe You'll Rate it: </strong>{this.state.movie.predicted_rating.toFixed(2)}</h3>
+                        <a className="watch-button" target="_blank" rel="noopener noreferrer" href={`https://www.netflix.com/search?q=${this.state.movie.title}`}>Watch now bro</a>
                     </div>
                 </div>
             )
