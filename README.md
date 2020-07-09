@@ -1,3 +1,8 @@
+### Local Variables that are set
+OMDB_API_KEY is the API Key for interacting with OMDB
+TMDB_API_KEY is the API Key for interacting with TMDB
+If these keys are not set the program won't run correctly
+
 ### Run locally
 ```
 server:
@@ -7,6 +12,13 @@ source venv/bin/activate
 pip install -r requirements.txt
 python3 src/recommender-api.py
 ```
+client:
+```
+cd movie-recommender/client
+npm install
+npm start
+```
+
 Remember to run ``` source OMDB_API_KEY``` to set OMDB Api Key.
 
 ### Run on Docker
