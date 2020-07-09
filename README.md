@@ -4,8 +4,8 @@ TMDB_API_KEY is the API Key for interacting with TMDB
 If these keys are not set the program won't run correctly
 
 ### Run locally
-```
 server:
+```
 cd movie-recommender/api
 python3 -m venv venv
 source venv/bin/activate
