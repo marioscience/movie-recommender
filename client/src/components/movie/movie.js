@@ -29,16 +29,18 @@ class Movie extends React.Component {
 
     render() {
         let movieInfo;
-        if (this.state.movie) {
+        if (this.state.movie && Object.keys(this.state.movie).length > 0) {
+            const runtimeHr = Math.floor(this.state.movie.runtime);
+            const runtimeMn = (this.state.movie.runtime - runtimeHr) * 60;
             movieInfo = (
                 <div>
                     <img src={this.state.movie.poster_url} alt=""/>
                     <h2>{this.state.movie.title}</h2>
                     <div>
                         <span>{this.state.movie.tagline}</span><br/>
-                        <span>{this.state.movie.release_date}</span><br/>
-                        <span>{this.state.movie.runtime}</span><br/>
-                        <span>{this.state.movie.imdb_rating}</span>
+                        <span><strong>Release Date: </strong>{new Date(this.state.movie.release_date).toLocaleDateString()}</span><br/>
+                        <span><strong>Runtime: </strong>{runtimeHr + ":" + ("0" + runtimeMn).slice(-2)}</span><br/>
+                        <h3><strong>We Believe You'll Rate it: </strong>{this.state.movie.predicted_rating.toFixed(2)}</h3>
                     </div>
                 </div>
             )
