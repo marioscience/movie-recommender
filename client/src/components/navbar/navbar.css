@@ -4,9 +4,29 @@
     top:0;
     width: 100%;
     color: black;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 .header a,
 h1.header-title {
     color: black;
     text-decoration: none;
+}
+
+.header-title {
+
+}
+
+.user-box {
+    display: flex;
+    align-items: center;
+    position: relative;
+    right: 45px;
+}
+
+.user-box svg {
+    position: relative;
+    top: 13px;
 }
