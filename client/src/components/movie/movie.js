@@ -6,11 +6,12 @@ class Movie extends React.Component {
         super(props);
         this.state = {
             similarMovies: [],
-            movie: {}
+            movie: {},
+            isFlushed: false
         }
     }
 
-    componentDidMount() {
+    fetchData() {
         const currentUser = 5; // Mocking user for now, should come from user service
         const movieId = this.props.match.params.movieId;
         const similarUrl = `http://localhost:5000/api/similar/${movieId}`;
@@ -25,6 +26,24 @@ class Movie extends React.Component {
             .then(response => response.json())
             .then(movie => this.setState({movie: movie[0]}))
             .catch(e => console.log(e.message));
+    }
+
+    componentDidMount() {
+        this.fetchData()
+    }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        if (!this.props.flush && nextProps.flush) {
+            this.setState({isFlused: false})
+        }
+
+        if (!this.state.isFlushed && nextProps.location.state === 'flush') {
+            this.setState({
+                isFlused: true
+            },
+            () => this.fetchData()
+            )
+        }
     }
 
     render() {

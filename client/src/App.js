@@ -16,7 +16,7 @@ function App() {
       <Navbar></Navbar>
       <Switch>
           <Route path="/" component={Trending} exact />
-          <Route path="/movie/:movieId" component={(props) => (<Movie timestamp={new Date().toString()} {...props} />)} />
+          <Route path="/movie/:movieId" component={Movie} />
           <Route component={Error} />
       </Switch>
       <Footer></Footer>

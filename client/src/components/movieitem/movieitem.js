@@ -6,15 +6,13 @@ import {Link} from "react-router-dom";
 function MovieItem(props) {
     const runtimeHr = Math.floor(props.movie.runtime);
     const runtimeMn = (props.movie.runtime - runtimeHr) * 60;
-    let imdb_rating_section;
+    let imdb_rating_section = '';
     if (props.movie.imdb_rating) {
         imdb_rating_section = <span>{props.movie.imdb_rating.toFixed(2)}</span>;
-    } else {
-        imdb_rating_section = ''//<a style={{color: "black", "z-index": "1000"}} target="_blank" rel="noopener noreferrer" href="https://www.netflix.com/browse">Watch</a>
     }
-    
+
     return (
-        <Link to={`/movie/${props.movie.id}`}>
+        <Link to={{pathname:`/movie/${props.movie.id}`, state: 'flush'}} >
             <div className="movie-item">
                 <img src={props.movie.poster_url} alt=""/>
                 <h3>{props.movie.title}</h3>
