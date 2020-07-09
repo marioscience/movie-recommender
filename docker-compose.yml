@@ -7,3 +7,12 @@ services:
       - ./api:/usr/src/app
     ports:
       - 5000:5000
+
+  recommender-client:
+    build: ./client
+    volumes:     
+      - ./client:/usr/src/app
+    ports:
+      - 3000:3000
+    stdin_open: true
+    tty: true
