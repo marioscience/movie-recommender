@@ -32,7 +32,7 @@ class Movie extends React.Component {
         if (this.state.movie) {
             movieInfo = (
                 <div>
-                    <img src={this.state.movie.poster} alt=""/>
+                    <img src={this.state.movie.poster_url} alt=""/>
                     <h2>{this.state.movie.title}</h2>
                     <div>
                         <span>{this.state.movie.tagline}</span><br/>

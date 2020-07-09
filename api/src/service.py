@@ -63,19 +63,25 @@ def get_movie_poster(movie):
         error_message = "Error TMDB API Key not set. Refer to documentation to add this"
         print(error_message, file=sys.stderr)
         return error_message, 500
+    movie_id = movie['id']
+    if not isinstance(movie_id, int):
+        movie_id = movie['id'].iloc[0]
 
     # The URL for the poster has two parts, base_url+poster_size and actual URL. The first is found in config.
     tmdb_config_url = "https://api.themoviedb.org/3/configuration?api_key=%s" % TMDB_KEY
-    url = "https://api.themoviedb.org/3/movie/%s/images?api_key=%s" % (str(movie['id']), TMDB_KEY)
+    url = "https://api.themoviedb.org/3/movie/%s/images?api_key=%s" % (str(movie_id), TMDB_KEY)
 
     config_res = json.loads(req.get(tmdb_config_url).text)["images"]
     res = json.loads(req.get(url).text)
 
     base_url = config_res["base_url"]
     poster_size = config_res["poster_sizes"][3]
-    poster_url = res["posters"][0]["file_path"]
 
-    movie['poster_url'] = base_url + poster_size + poster_url
+    if res["posters"]:
+        poster_url = res["posters"][0]["file_path"]
+        movie['poster_url'] = base_url + poster_size + poster_url
+    else:
+        movie['poster_url'] = "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg"
     return movie
 
 
