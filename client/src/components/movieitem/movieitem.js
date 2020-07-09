@@ -16,7 +16,7 @@ function MovieItem(props) {
     return (
         <Link to={`/movie/${props.movie.id}`}>
             <div className="movie-item">
-                <img src={props.movie.poster} alt=""/>
+                <img src={props.movie.poster_url} alt=""/>
                 <h3>{props.movie.title}</h3>
                 <div className="detail-section">
                     <span>{props.movie.tagline}</span><br/>
