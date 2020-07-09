@@ -11,10 +11,10 @@ class Movie extends React.Component {
     }
 
     componentDidMount() {
-        const currentUser = 10; // Mocking user for now, should come from user service
+        const currentUser = 5; // Mocking user for now, should come from user service
         const movieId = this.props.match.params.movieId;
         const similarUrl = `http://localhost:5000/api/similar/${movieId}`;
-        const rateUrl = `http://localhost:5000/api/rate/${currentUser}/${movieId}`
+        const rateUrl = `http://localhost:5000/api/rate/${currentUser}/${movieId}`;
 
         fetch(similarUrl)
             .then(response => response.json())
