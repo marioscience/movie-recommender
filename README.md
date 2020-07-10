@@ -1,4 +1,5 @@
-                                                            
+```
+
  ▄▄▄  ▄▄▄                         ██                        
  ███  ███                         ▀▀                        
  ████████   ▄████▄   ██▄  ▄██   ████      ▄████▄   ▄▄█████▄ 
@@ -18,6 +19,7 @@
  ▀▀    ▀▀▀   ▀▀▀▀▀     ▀▀▀▀▀     ▀▀▀▀    ▀▀ ▀▀ ▀▀  ▀▀ ▀▀ ▀▀    ▀▀▀▀▀   ▀▀    ▀▀    ▀▀▀ ▀▀    ▀▀▀▀▀    ▀▀      
                                                                                                               
                                                                                                               
+```
 
 ### Local Variables that are set
 OMDB_API_KEY is the API Key for interacting with OMDB
