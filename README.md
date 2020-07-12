@@ -38,10 +38,17 @@ npm start
 Remember to run ``` source OMDB_API_KEY``` to set OMDB Api Key.
 
 ### Run on Docker
+server:
 ```
 cd movie-recomender/api
-docker build --tag movie-recommend .
-docker run -it -p 5000:5000 movie-recommend
+docker build --tag movie-recommend-api .
+docker run -it -p 5000:5000 movie-recommend-api
+```
+client:
+```
+cd movie-recomender/client
+docker build --tag movie-recommend-client .
+docker run -it -p 5000:5000 movie-recommend-client
 ```
 
 ### docker-compose
