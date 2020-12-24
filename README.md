@@ -15,9 +15,9 @@
 ```
 
 ### Local Variables that are set
-OMDB_API_KEY is the API Key for interacting with OMDB
-TMDB_API_KEY is the API Key for interacting with TMDB
-If these keys are not set the program won't run correctly
+OMDB_API_KEY is the API Key for interacting with OMDB<br />
+TMDB_API_KEY is the API Key for interacting with TMDB<br />
+If these keys are not set the program won't run correctly<br />
 
 ### Run locally
 server:
@@ -98,8 +98,8 @@ This is the object that is returned in each request. Either singly or as part of
 
 
 ### Create OMDB Api Key
-Not used at the moment, but a requirement for the program to run: create a file with
-the OMDB Api Key to use. (can be a simple dummy at the moment, not a real key)
+Not used at the moment, but a requirement for the program to run: create a file with<br />
+the OMDB Api Key to use. (can be a simple dummy at the moment, not a real key)<br />
 
 create a file named OMDB_API_KEY under movie-recommender/api and add the following to it:
 ```
