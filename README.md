@@ -98,10 +98,10 @@ This is the object that is returned in each request. Either singly or as part of
 
 
 ### Create OMDB Api Key
-Not used at the moment, but a requirement for the program to run: create a file with<br />
-the OMDB Api Key to use. (can be a simple dummy at the moment, not a real key)<br />
+A requirement for the program to run: create a file with<br />
+the OMDB Api Key to use.<br />
 
 create a file named OMDB_API_KEY under movie-recommender/api and add the following to it:
 ```
-export OMDB_API_KEY="this_can_be_fake_for_now"
+export OMDB_API_KEY="this_is_your_api_key"
 ```
